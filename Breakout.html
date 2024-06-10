@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="Breakout.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <a href="BreakoutGame.html"><button id="Start-button" onclick="a">Play</button></a>
+    
+    <div id="Instructions-button" onclick="Instructions()">Instructions</div>
+    <div id="Instructions-text">
+
+        Control the paddle with your mouse. Bounce the ball off the paddle and score points by breaking blocks.
+    <button id="Instructions-back" onclick="InsBack()">Back</button>
+    </div>
+    <a href="Homepage.html"><button id="Back-button" onclick="a">Back</button></a>
+
+    <script src="Breakout.js">
+        let x = document.getElementById("Instructions-text")
+function Instructions(){
+    x.style.display = "block"
+}
+function InsBack(){
+    x.style.display = "none"
+}
+function Start(){
+    window.open("BreakoutGame.html")
+}
+    </script>
+</body>
+</html>

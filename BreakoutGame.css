@@ -1,0 +1,25 @@
+canvas {
+    display: block;
+    margin: auto;
+    border: solid 1px black;
+    background-color: rgb(134, 204, 212);
+    border-radius: 1%;
+    
+}
+#menu{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+.Button{
+    width: 100px;
+    background-color: red;
+    cursor: pointer;
+    border: solid black 1px;
+    margin-top: 5px;
+    padding: 4px;
+}
+#startButton{
+    position: absolute;
+    left: 45%;
+}

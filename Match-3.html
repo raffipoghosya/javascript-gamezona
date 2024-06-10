@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bejeweled</title>
+    <style>
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(8, 50px);
+            gap: 5px;
+        }
+
+        .gem {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #000;
+            background-size: cover;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-container"></div>
+    <a href="Homepage.html"><div class="Button" >Back to home</div></a>
+
+    <script>
+        // Gem colors
+        const colors = ['Red.png', 'Green.png', 'Yellow.png', 'Lblue.png', 'Dblue.png'];
+
+        // Create game board
+        const board = [];
+        const container = document.querySelector('.game-container');
+
+        for (let i = 0; i < 8; i++) {
+            const row = [];
+            for (let j = 0; j < 8; j++) {
+                const gem = document.createElement('div');
+                gem.classList.add('gem');
+                gem.dataset.row = i;
+                gem.dataset.col = j;
+                gem.style.backgroundImage = `url('${colors[Math.floor(Math.random() * colors.length)]}')`;
+                gem.addEventListener('click', () => handleGemClick(i, j));
+                row.push(gem);
+                container.appendChild(gem);
+            }
+            board.push(row);
+        }
+
+        // Handle gem click
+        function handleGemClick(row, col) {
+            // Highlight the selected gem (for demonstration)
+            board[row][col].style.border = '2px solid yellow';
+        }
+
+        // Function to fill consecutive empty positions
+        function fillConsecutiveEmpty() {
+            for (let j = 0; j < 8; j++) {
+                let emptyCount = 0;
+                for (let i = 0; i < 8; i++) {
+                    if (getComputedStyle(board[i][j]).backgroundImage === 'none') {
+                        emptyCount++;
+                    } else {
+                        if (emptyCount > 0) {
+                            for (let k = 0; k < emptyCount; k++) {
+                                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                                board[i - emptyCount + k][j].style.backgroundImage = `url('${randomColor}')`;
+                            }
+                            emptyCount = 0;
+                        }
+                    }
+                }
+                // Handle consecutive empty positions at the bottom
+                if (emptyCount > 0) {
+                    for (let k = 0; k < emptyCount; k++) {
+                        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                        board[7 - k][j].style.backgroundImage = `url('${randomColor}')`;
+                    }
+                }
+            }
+        }
+
+        // Call the function to fill consecutive empty positions
+        fillConsecutiveEmpty();
+
+        // Handle arrow key controls and move gems
+        document.addEventListener('keydown', function(event) {
+            const selectedGem = document.querySelector('.gem[style*="border: 2px solid yellow"]');
+            if (selectedGem) {
+                const row = parseInt(selectedGem.dataset.row);
+                const col = parseInt(selectedGem.dataset.col);
+
+                switch (event.key) {
+                    case 'ArrowUp':
+                        moveGem(row, col, row - 1, col);
+                        break;
+                    case 'ArrowDown':
+                        moveGem(row, col, row + 1, col);
+                        break;
+                    case 'ArrowLeft':
+                        moveGem(row, col, row, col - 1);
+                        break;
+                    case 'ArrowRight':
+                        moveGem(row, col, row, col + 1);
+                        break;
+                }
+            }
+        });
+
+        // Function to move gems
+        function moveGem(fromRow, fromCol, toRow, toCol) {
+            // Check if the move is within the bounds of the board
+            if (toRow >= 0 && toRow < 8 && toCol >= 0 && toCol < 8) {
+                // Swap gems
+                const tempColor = board[fromRow][fromCol].style.backgroundImage;
+                board[fromRow][fromCol].style.backgroundImage = board[toRow][toCol].style.backgroundImage;
+                board[toRow][toCol].style.backgroundImage = tempColor;
+
+                // Remove highlight from the selected gem
+                const selectedGem = document.querySelector('.gem[style*="border: 2px solid yellow"]');
+                if (selectedGem) {
+                    selectedGem.style.border = '1px solid black';
+                }
+
+                // Check for matches after the move
+                checkMatches4();
+                checkMatches3();
+            }
+        }
+
+        // Check for matches
+        function checkMatches4() {
+            for (let i = 0; i < 8; i++) {
+                for (let j = 0; j < 8; j++) {
+                    const color = getComputedStyle(board[i][j]).backgroundImage;
+                    if (color !== 'none') {
+                        if (j < 5 && color === getComputedStyle(board[i][j + 1]).backgroundImage &&
+                            color === getComputedStyle(board[i][j + 2]).backgroundImage &&
+                            color === getComputedStyle(board[i][j + 3]).backgroundImage) {
+                            removeMatch4(i, j, i, j + 1, i, j + 2, i, j + 3);
+                        }
+                        if (i < 5 && color === getComputedStyle(board[i + 1][j]).backgroundImage &&
+                            color === getComputedStyle(board[i + 2][j]).backgroundImage &&
+                            color === getComputedStyle(board[i + 3][j]).backgroundImage) {
+                            removeMatch4(i, j, i + 1, j, i + 2, j, i + 3, j);
+                        }
+                    }
+                }
+            }
+        }
+
+        function checkMatches3() {
+            for (let i = 0; i < 8; i++) {
+                for (let j = 0; j < 8; j++) {
+                    const color = getComputedStyle(board[i][j]).backgroundImage;
+                    if (color !== 'none') {
+                        if (j < 6 && color === getComputedStyle(board[i][j + 1]).backgroundImage &&
+                            color === getComputedStyle(board[i][j + 2]).backgroundImage) {
+                            removeMatch(i, j, i, j + 1, i, j + 2);
+                        }
+                        if (i < 6 && color === getComputedStyle(board[i + 1][j]).backgroundImage &&
+                            color === getComputedStyle(board[i + 2][j]).backgroundImage) {
+                            removeMatch(i, j, i + 1, j, i + 2, j);
+                        }
+                    }
+                }
+            }
+        }
+        function checkStart(){
+            checkMatches4();
+            checkMatches3();
+        }
+        function fillBlanks(){
+            for(let i = 0; i < 8; i++){
+                for(let j = 0; j < 8; j++){
+                    const color = getComputedStyle(board[i][j]).backgroundImage;
+                    if(color === 'none'){
+                        board[i][j].style.backgroundImage = `url('${colors[Math.floor(Math.random() * colors.length)]}')`;
+                    }
+                }
+            }
+        }
+        // Remove matched gems
+        function removeMatch(row1, col1, row2, col2, row3, col3) {
+            board[row1][col1].style.backgroundImage = 'none';
+            board[row2][col2].style.backgroundImage = 'none';
+            board[row3][col3].style.backgroundImage = 'none';
+            // Add score or other actions here
+        }
+
+        function removeMatch4(row1, col1, row2, col2, row3, col3, row4, col4) {
+            board[row1][col1].style.backgroundImage = 'none';
+            board[row2][col2].style.backgroundImage = 'none';
+            board[row3][col3].style.backgroundImage = 'none';
+            board[row4][col4].style.backgroundImage = 'none';
+            // Add score or other actions here
+        }
+        for(let l=0;l<10;l++){
+        checkStart();
+        fillBlanks();
+        
+        }
+    </script>
+</body>
+
+</html>

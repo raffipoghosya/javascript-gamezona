@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="BreakoutGame.css">
+    <title>Breakout Game</title>
+   
+</head>
+<body>
+    <button onclick="startGame()" id="startButton">Start Game</button>
+    <canvas id="breakoutCanvas" width="575" height="320"></canvas>
+    <div id = "menu">
+        <a href="Homepage.html"><div class="Button" >Back to home</div></a>
+        <div class="Button" ><button id="closeButton">Pause</button></div>
+    </div>
+   
+
+
+
+    <script>
+         // Define the function to execute when the button is clicked
+  function startGame() {
+        const canvas = document.getElementById("breakoutCanvas");
+        const ctx = canvas.getContext("2d");
+
+        let ballX = canvas.width / 2;
+        let ballY = canvas.height - 30;
+        let ballSpeedX = 2;
+        let ballSpeedY = -2;
+
+        const paddleHeight = 10;
+        const paddleWidth = 175;
+        let paddleX = (canvas.width - paddleWidth) / 2;
+    
+
+        const brickRowCount = 5;
+        const brickColumnCount = 15;
+        const brickWidth = 25;
+        const brickHeight = 20;
+        const brickPadding = 10;
+        const brickOffsetTop = 30;
+        const brickOffsetLeft = 30;
+        const gravity = 0.0;
+        const friction = 1;
+       
+
+        const bricks = [];
+        for (let c = 0; c < brickColumnCount; c++) {
+            bricks[c] = [];
+            for (let r = 0; r < brickRowCount; r++) {
+                bricks[c][r] = { x: 0, y: 0, status: 1 };
+            }
+        }
+
+        document.addEventListener("keydown", keyDownHandler);
+        document.addEventListener("keyup", keyUpHandler);
+
+        let rightPressed = false;
+        let leftPressed = false;
+
+        function keyDownHandler(e) {
+            if (e.key === "Right" || e.key === "ArrowRight") {
+                rightPressed = true;
+            } else if (e.key === "Left" || e.key === "ArrowLeft") {
+                leftPressed = true;
+            }
+        }
+    
+        function keyUpHandler(e) {
+            if (e.key === "Right" || e.key === "ArrowRight") {
+                rightPressed = false;
+            } else if (e.key === "Left" || e.key === "ArrowLeft") {
+                leftPressed = false;
+            }
+        }
+
+        let score = 0;
+
+        function drawBall() {
+            ctx.beginPath();
+            ctx.arc(ballX, ballY, 10, 0, Math.PI * 2);
+            ctx.fillStyle = "#0095DD";
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawPaddle() {
+            ctx.beginPath();
+            ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+            ctx.fillStyle = "#0095DD";
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function drawBricks() {
+            for (let c = 0; c < brickColumnCount; c++) {
+                for (let r = 0; r < brickRowCount; r++) {
+                    if (bricks[c][r].status === 1) {
+                        const brickX = c * (brickWidth + brickPadding) + brickOffsetLeft;
+                        const brickY = r * (brickHeight + brickPadding) + brickOffsetTop;
+                        bricks[c][r].x = brickX;
+                        bricks[c][r].y = brickY;
+                        ctx.beginPath();
+                        ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                        ctx.fillStyle = "red";
+                        ctx.fill();
+                        ctx.closePath();
+                    }
+                }
+            }
+        }
+
+        function collisionDetection() {
+            for (let c = 0; c < brickColumnCount; c++) {
+                for (let r = 0; r < brickRowCount; r++) {
+                    const b = bricks[c][r];
+                    if (b.status === 1) {
+                        if (
+                            ballX > b.x &&
+                            ballX < b.x + brickWidth &&
+                            ballY > b.y &&
+                            ballY < b.y + brickHeight
+                        ) {
+                            ballSpeedY = -ballSpeedY;
+                            b.status = 0;
+                            score++;
+                            if (score === 75) {
+                                alert("Congratulations!You win!");
+                                window.location = "Snake.html";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // function update() {
+        //     if (rightPressed && paddleX < canvas.width - paddleWidth) {
+        //         paddleX += 7;
+        //     } else if (leftPressed && paddleX > 0) {
+        //         paddleX -= 7;
+        //     }
+
+        //     ballX += ballSpeedX;
+        //     ballY += ballSpeedY;
+
+        //     if (ballX + ballSpeedX > canvas.width || ballX + ballSpeedX < 0) {
+        //         ballSpeedX = -ballSpeedX;
+        //     }
+        //     if (ballY + ballSpeedY < 0) {
+        //         ballSpeedY = -ballSpeedY;
+        //     } else if (ballY + ballSpeedY > canvas.height - paddleHeight) {
+        //         if (ballX > paddleX && ballX < paddleX + paddleWidth) {
+        //             ballSpeedY = -ballSpeedY;
+        //         } else {
+                  
+        //             alert("Game Over. Your Score: " + score);
+                    
+                  
+                
+                    
+        //         }
+        //     }
+
+        //     collisionDetection();
+        // }
+function update() {
+    if (rightPressed && paddleX < canvas.width - paddleWidth) {
+        paddleX += 7;
+    } else if (leftPressed && paddleX > 0) {
+        paddleX -= 7;
+    }
+
+    // Apply gravity to the ball
+    ballSpeedY += gravity;
+
+    ballX += ballSpeedX;
+    ballY += ballSpeedY;
+
+    // Bounce the ball off the walls with friction
+    if (ballX + ballSpeedX > canvas.width || ballX + ballSpeedX < 0) {
+        ballSpeedX = -ballSpeedX * friction;
+    }
+
+    // Bounce the ball off the ceiling with friction
+    if (ballY + ballSpeedY < 0) {
+        ballSpeedY = -ballSpeedY * friction;
+    } else if (ballY + ballSpeedY > canvas.height - paddleHeight) {
+        // Check if the ball hits the paddle
+        if (ballX > paddleX && ballX < paddleX + paddleWidth) {
+            if (ballX < paddleX + paddleWidth/4) {
+                ballSpeedX = -3
+                ballSpeedY = -1
+            }
+            else if(ballX > paddleX + paddleWidth/4 && ballX < paddleX + paddleWidth/2){
+                ballSpeedX = -2
+                ballSpeedY = -2
+            }
+            else if(ballX > paddleX + paddleWidth/2 && ballX < paddleX + paddleWidth*0.75){
+                ballSpeedX = 2
+                ballSpeedY = -2
+            }
+            else if(ballX > paddleX + paddleWidth*0.75){
+                ballSpeedX = 3
+                ballSpeedY = -1
+            }
+            // ballSpeedY = -ballSpeedY * friction;
+
+        } else {
+            gameOver = true;
+            alert("Game Over. Your Score: " + score);
+        }
+    }
+
+    collisionDetection();
+}
+        function drawScore() {
+            ctx.font = "16px Arial";
+            ctx.fillStyle = "#0095DD";
+            ctx.fillText("Score: " + score, 8, 20);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBricks();
+            drawBall();
+            drawPaddle();
+            drawScore();
+        }
+
+        function gameLoop() {
+            if(!gameOver) {
+                update();
+                draw();
+                requestAnimationFrame(gameLoop);
+            }
+        }
+        // function homescreen(){
+        //     window.location = "Homepage.html"
+        // }
+       
+        document.getElementById('closeButton').addEventListener('click', function() {
+  // Attempt to close the opened window
+//   window.open('', '_self').close();s
+            alert('Press "OK" to unpause')
+});
+
+        let gameOver = false;
+        gameLoop();
+    console.log('Game started!');
+  }
+;
+       
+    </script>
+</body>
+</html>

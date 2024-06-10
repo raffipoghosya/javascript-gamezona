@@ -1,0 +1,32 @@
+body{
+    background-color: goldenrod;
+}
+#Instructions-text{
+    display: none;
+    color: blue;
+}
+#Start-button{
+    width: 100px;
+    height: 75px;
+    background-color: orange;
+    border: solid 1px;
+    margin: 10px;
+}
+#Instructions-button{
+    width: 100px;
+    height: 75px;
+    background-color: orange;
+    border: solid 1px;
+    margin: 10px;
+}
+#Instructions-back{
+    padding: 10px 5px;
+    background-color: yellow;
+}
+#Back-button{
+    width: 100px;
+    height: 75px;
+    background-color: orange;
+    border: solid 1px;
+    margin: 10px;
+}

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #word-display {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        #guess-input {
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
+        #message,
+        #incorrect-guesses {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        #game-container {
+            max-width: 400px;
+            margin: auto;
+        }
+
+        #hangman-image {
+            max-width: 100%;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="game-container">
+        <h1>Hangman Game</h1>
+        <img id="hangman-image" src="https://i.imgur.com/K1hUGsU.png" alt="Hangman" />
+        <div id="word-display"></div>
+        <input type="text" id="guess-input" maxlength="1" placeholder="Enter a letter">
+        <button onclick="makeGuess()">Guess</button>
+        <button onclick="giveHint()">Hint</button>
+        <p id="message"></p>
+        <p id="incorrect-guesses">Incorrect Guesses: <span id="incorrect-guesses-count">0</span></p>
+    </div>
+
+    <script>
+        const words = ["hangman", "javascript", "programming", "developer", "computer","table","chair","magnet","glasses","hippopotamus","potato"];
+        let chosenWord = "";
+        let wordDisplay = [];
+        let incorrectGuesses = 0;
+        const maxIncorrectGuesses = 6;
+
+        function startGame() {
+            chosenWord = words[Math.floor(Math.random() * words.length)];
+            wordDisplay = Array(chosenWord.length).fill('_');
+            incorrectGuesses = 0;
+            updateDisplay();
+        }
+
+        function makeGuess() {
+            const guessInput = document.getElementById('guess-input');
+            const guess = guessInput.value.toLowerCase();
+
+            if (!guess.match(/[a-z]/)) {
+                alert('Please enter a valid letter.');
+                return;
+            }
+
+            if (chosenWord.includes(guess)) {
+                for (let i = 0; i < chosenWord.length; i++) {
+                    if (chosenWord[i] === guess) {
+                        wordDisplay[i] = guess;
+                    }
+                }
+            } else {
+                incorrectGuesses++;
+            }
+
+            guessInput.value = '';
+            updateDisplay();
+            checkGameStatus();
+        }
+
+        function giveHint() {
+            const unrevealedIndices = wordDisplay.reduce((indices, letter, index) => {
+                if (letter === '_') {
+                    indices.push(index);
+                }
+                return indices;
+            }, []);
+
+            if (unrevealedIndices.length > 0) {
+                const randomIndex = unrevealedIndices[Math.floor(Math.random() * unrevealedIndices.length)];
+                wordDisplay[randomIndex] = chosenWord[randomIndex];
+                updateDisplay();
+                checkGameStatus();
+            }
+        }
+
+        function updateDisplay() {
+            const wordDisplayElement = document.getElementById('word-display');
+            wordDisplayElement.textContent = wordDisplay.join(' ');
+
+            const incorrectGuessesCountElement = document.getElementById('incorrect-guesses-count');
+            incorrectGuessesCountElement.textContent = incorrectGuesses;
+
+            const incorrectGuessesElement = document.getElementById('incorrect-guesses');
+            incorrectGuessesElement.style.color = (incorrectGuesses >= maxIncorrectGuesses) ? 'red' : 'black';
+            
+        }
+
+        function checkGameStatus() {
+            const messageElement = document.getElementById('message');
+            const hangmanImage = document.getElementById('hangman-image');
+
+            if (wordDisplay.join('') === chosenWord) {
+                messageElement.textContent = 'Congratulations! You guessed the word.';
+                hangmanImage.src = "https://i.imgur.com/XSbZgVZ.png"; // Victory image
+                hangmanImage.style.display = 'block';
+                setTimeout(() => {
+                    startGame();
+                    messageElement.textContent = '';
+                    hangmanImage.style.display = 'none';
+                }, 2000);
+            } else if (incorrectGuesses >= maxIncorrectGuesses) {
+                messageElement.textContent = `Game over. The word was "${chosenWord}".`;
+                hangmanImage.src = "https://i.imgur.com/vcNE4WF.png"; // Game over image
+                hangmanImage.style.display = 'block';
+                setTimeout(() => {
+                    startGame();
+                    messageElement.textContent = '';
+                    hangmanImage.style.display = 'none';
+                }, 2000);
+            }
+        }
+
+        startGame();  // Start the game initially
+    </script>
+</body>
+
+</html>

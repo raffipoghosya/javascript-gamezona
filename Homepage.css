@@ -1,0 +1,75 @@
+body{
+    background:yellow;
+    background-size: 100% 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+div{
+    width:90px;
+    padding: 40px 20px;
+    margin: 20px;
+    background-size: 100% 100%;
+    border: solid black 3px;
+    display: inline;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5%;
+    cursor: pointer;
+    font-weight: 900;
+   
+    
+    
+}
+#breakout{
+    background-image:url("Breakoutimage.png");
+    color: white;
+}
+
+#tic{
+    background-image:url("Ticimage.png");
+    color: blue;
+    font-weight: 900;
+
+}
+
+#snake{
+    background-image:url("Snakeimage.png");
+
+    font-weight: 900;
+
+}
+
+#trex{
+    background-image:url("Treximage.png");
+
+    font-weight: 900;
+
+}
+
+#pong{
+    background-image:url("ponggif.gif");
+
+    font-weight: 900;
+    color: white;
+
+}
+#tetris{
+    background-image: url("Tetrisimage.jpeg");
+    font-weight: 900;
+    color: black;
+}
+#spaceinvaders{
+    background-image: url("Spaceinvader.png");
+    font-weight: 900;
+    color: white;
+}
+#Flappy{
+    background-image: url("FlappyImage.png");
+    font-weight: 900;
+    color: red;   
+}
+#Bejeweled{
+    background-image: url("Jeweled.png");
+    color: orchid;
+}

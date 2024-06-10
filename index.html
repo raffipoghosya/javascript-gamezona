@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+</head>
+
+<body>
+    <form id="main-form" method="post">
+        <label for="name">Username:</label>
+        <input type="text" name="name" placeholder="name" id="name"><br><br>
+        <label for="password">Password:</label>
+        <input type="password" name="pass" placeholder="password" id="pass"><br><br>
+        <div id="errorr" style="color: red;"></div>
+        <button id="button" onclick="Check(event)">Let's Go!</button>
+    </form>
+
+    <script>
+        function Check(event) {
+            event.preventDefault(); // Prevent form submission
+
+            let x = document.getElementById("name");
+            let y = document.getElementById("pass");
+
+            if (x.value === "Break" && y.value === "Out") {
+                console.log("Redirecting to Middlepage.html");
+                window.location.href = "Middlepage.html"; // Use window.location.href to navigate to the target page
+            } else {
+                alert("Wrong Username or Password");
+            }
+        }
+    </script>
+</body>
+
+</html>

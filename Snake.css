@@ -1,0 +1,28 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #ddd;
+}
+
+#game-board {
+    display: grid;
+    grid-template-columns: repeat(20, 20px);
+    gap: 1px;
+}
+
+.cell {
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
+.snake {
+    background-color: #4CAF50;
+}
+
+.food {
+    background-color: #FF0000;
+}

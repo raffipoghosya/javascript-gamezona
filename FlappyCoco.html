@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird Clone</title>
+    <style>
+        canvas {
+            border: 1px solid #000;
+            display: block;
+            margin: 0 auto;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <canvas id="gameCanvas" width="1050" height="750">
+        
+    </canvas>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Bird
+        let bird = {
+            x: 50,
+            y: canvas.height / 2,
+            radius: 20,
+            velocity: 0,
+            gravity: 0.5
+        };
+
+        // Pipes
+        let pipes = [];
+        const pipeWidth = 50;
+        const pipeGap = 200;
+        const pipeSpeed = 4;
+        let spawnTimer = 0;
+        let spawnInterval = 138;
+        let design = 1;
+        let btype = 1;
+        
+
+        // Game variables
+        let score = 0;
+        let gameOver = false;
+
+        // Controls
+        document.addEventListener("keydown", () => {
+            if (!gameOver) {
+                bird.velocity = -8;
+                design = 2;
+            }
+        });
+         // Controls
+         document.addEventListener("keyup", () => {
+            if (!gameOver) {
+                design = 1;
+            }
+        });
+
+        // Game loop
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw bird
+            var gif = new Image();
+            if(design === 1){
+            gif.src = "coconut1.png";
+            } else if(design === 2){
+                gif.src = "coconut2.png";
+            } 
+
+            ctx.drawImage(gif,bird.x-30,bird.y-25,85,60);
+            // Update bird position
+            bird.velocity += bird.gravity;
+            bird.y += bird.velocity;
+
+            // Draw pipes
+            for (let i = 0; i < pipes.length; i++) {
+                ctx.fillStyle = "#009933";
+                ctx.fillRect(pipes[i].x, 0, pipeWidth, pipes[i].top);
+                ctx.fillRect(pipes[i].x, pipes[i].bottom, pipeWidth, canvas.height - pipes[i].bottom);
+
+                pipes[i].x -= pipeSpeed;
+
+                // Check collision
+                if (bird.x + bird.radius > pipes[i].x && bird.x - bird.radius < pipes[i].x + pipeWidth &&
+                    (bird.y - bird.radius < pipes[i].top || bird.y + bird.radius > pipes[i].bottom)) {
+                    gameOver = true;
+                }
+
+                // Score
+                if (pipes[i].x === bird.x - bird.radius) {
+                    score++;
+                    
+                }
+
+                // Remove pipes
+                if (pipes[i].x + pipeWidth === 0) {
+                    pipes.splice(i, 1);
+                    spawnInterval--
+                    console.log(spawnInterval);
+                   
+                }
+            }
+
+            // Draw score
+            ctx.font = "24px Arial";
+            ctx.fillStyle = "#000";
+            ctx.fillText("Score: " + score, 10, 30);
+
+            // Game over
+            if (bird.y + bird.radius > canvas.height || bird.y - bird.radius < 0) {
+                gameOver = true;
+            }
+
+            if (!gameOver) {
+                requestAnimationFrame(draw);
+            } else {
+                ctx.fillText("Game Over!", canvas.width / 2 - 70, canvas.height / 2);
+            }
+
+            // Spawn pipes
+            spawnTimer++;
+            if (spawnTimer === spawnInterval && !gameOver) {
+                spawnPipe();
+                spawnTimer = 0;
+            }
+        }
+
+        function spawnPipe() {
+            let topHeight = Math.random() * (canvas.height - pipeGap - 100) + 70;
+            let bottomHeight = canvas.height - topHeight - pipeGap;
+            pipes.push({
+                x: canvas.width,
+                top: topHeight,
+                bottom: canvas.height - bottomHeight
+            });
+        }
+
+        draw();
+    </script>
+</body>
+
+</html>
